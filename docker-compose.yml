@@ -3,15 +3,21 @@ services:
     image: node:22-alpine
     working_dir: /app
     command: ["sh", "-lc", "npm ci && npm run build"]
+    environment:
+      - BROWSER_WORKER_URL=http://semwebact-browser:3800
     volumes:
       - ./:/app
     depends_on:
       - semwebact-browser
+    networks:
+      - internal
 
   semwebact-browser:
     image: mcr.microsoft.com/playwright:v1.55.0-jammy
     working_dir: /app
-    command: ["sh", "-lc", "sleep infinity"]
+    command: ["sh", "-lc", "npm ci && npm run start:browser-worker"]
+    environment:
+      - BROWSER_WORKER_PORT=3800
     volumes:
       - ./:/app
     networks:
