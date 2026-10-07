@@ -7,6 +7,11 @@ export interface RecordedInteraction {
   semanticLabel?: string;
 }
 
+export interface ObservedMutation {
+  timestamp: string;
+  summary: string;
+}
+
 export interface RecordingPackage {
   startedAt: string;
   site: string;
@@ -15,5 +20,6 @@ export interface RecordingPackage {
   screenshots: string[];
   domSnapshots: string[];
   accessibilitySnapshots: string[];
+  observedMutations?: ObservedMutation[];
   redactionPolicy: "secrets-redacted";
 }

@@ -1,8 +1,12 @@
+import type { ActionRisk } from "../../../../packages/semantic-actions/src/model.js";
+
 export interface ActivityRecord {
   timestamp: string;
   actionId: string;
   source: "webmcp" | "adapter";
   result: "ok" | "error";
+  risk?: ActionRisk;
+  actorId?: string;
 }
 
 export class ActivityLog {

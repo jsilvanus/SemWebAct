@@ -61,6 +61,10 @@ export class SemWebActRuntime {
     return toMcpToolDescriptors([...this.boundActions.values()].map((entry) => entry.action));
   }
 
+  getAction(actionId: string): SemanticAction | undefined {
+    return this.boundActions.get(actionId)?.action;
+  }
+
   async invoke(actionId: string, input: Record<string, unknown>): Promise<SemanticActionResult> {
     const bound = this.boundActions.get(actionId);
     if (!bound) {
