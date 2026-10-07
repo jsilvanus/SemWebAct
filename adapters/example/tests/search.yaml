@@ -1,0 +1,7 @@
+action: search
+input:
+  query: "test"
+expect:
+  results:
+    type: list
+    min_items: 1

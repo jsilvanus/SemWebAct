@@ -1,0 +1,22 @@
+services:
+  semwebact-server:
+    image: node:22-alpine
+    working_dir: /app
+    command: ["sh", "-lc", "npm ci && npm run build"]
+    volumes:
+      - ./:/app
+    depends_on:
+      - semwebact-browser
+
+  semwebact-browser:
+    image: mcr.microsoft.com/playwright:v1.55.0-jammy
+    working_dir: /app
+    command: ["sh", "-lc", "sleep infinity"]
+    volumes:
+      - ./:/app
+    networks:
+      - internal
+
+networks:
+  internal:
+    driver: bridge
