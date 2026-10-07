@@ -1,0 +1,48 @@
+id: example.search
+name: Example Search
+version: 1.0.0
+site:
+  domains:
+    - example.com
+risk: read
+approval: none
+objects:
+  search_box:
+    locator:
+      strategies:
+        - role:
+            role: textbox
+            name: Search
+        - label: Search
+        - placeholder: Search
+        - css: "#search-input"
+  search_results:
+    locator:
+      strategies:
+        - role:
+            role: list
+            name: Search results
+        - css: ".search-results"
+actions:
+  search:
+    description: Search the website
+    input:
+      query:
+        type: string
+        required: true
+    steps:
+      - navigate:
+          url: "https://example.com"
+      - find: search_box
+      - fill:
+          value: "{{query}}"
+      - press:
+          key: Enter
+      - wait:
+          for: search_results
+      - extract:
+          object: search_results
+          as: results
+    output:
+      results:
+        type: list
