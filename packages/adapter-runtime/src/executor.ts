@@ -1,4 +1,3 @@
-import type { AdapterDefinition } from "../../adapter-schema/src/schema.js";
 import { validateAdapter } from "../../adapter-schema/src/validate.js";
 import type { BrowserDriver, LocatedElement } from "./types.js";
 
@@ -15,6 +14,19 @@ function interpolate(template: string, input: Record<string, unknown>): string {
   return template.replace(/{{\s*([a-zA-Z0-9_]+)\s*}}/g, (_m, key: string) => String(input[key] ?? ""));
 }
 
+function validateRequiredInputs(inputSchema: Record<string, unknown>, input: Record<string, unknown>): void {
+  for (const [name, definition] of Object.entries(inputSchema)) {
+    if (typeof definition !== "object" || definition === null) {
+      continue;
+    }
+
+    const isRequired = Boolean((definition as { required?: unknown }).required);
+    if (isRequired && input[name] === undefined) {
+      throw new Error(`Missing required action input: ${name}`);
+    }
+  }
+}
+
 export class AdapterExecutor {
   constructor(
     private readonly rawAdapter: unknown,
@@ -27,6 +39,8 @@ export class AdapterExecutor {
     if (!action) {
       throw new Error(`Unknown action: ${actionName}`);
     }
+
+    validateRequiredInputs(action.input, input);
 
     const output: Record<string, unknown> = {};
     let currentElement: LocatedElement | undefined;
@@ -51,7 +65,18 @@ export class AdapterExecutor {
       }
 
       if ("click" in step) {
-        if (!currentElement) throw new Error("click requires a previous find step");
+        if (step.click.object) {
+          const definition = adapter.objects[step.click.object];
+          if (!definition) {
+            throw new Error(`Unknown click object: ${step.click.object}`);
+          }
+          const target = await this.browser.find(definition.locator.strategies);
+          await this.browser.click(target);
+          currentElement = target;
+          continue;
+        }
+
+        if (!currentElement) throw new Error("click requires a previous find step or an explicit object");
         await this.browser.click(currentElement);
         continue;
       }
@@ -75,9 +100,15 @@ export class AdapterExecutor {
           }
           const waitedElement = await this.browser.find(definition.locator.strategies);
           await this.browser.waitForElement(waitedElement, step.wait.timeoutMs);
-        } else if (currentElement) {
-          await this.browser.waitForElement(currentElement, step.wait.timeoutMs);
+          currentElement = waitedElement;
+          continue;
         }
+
+        if (!currentElement) {
+          throw new Error("wait requires a previous find step or a 'for' target object");
+        }
+
+        await this.browser.waitForElement(currentElement, step.wait.timeoutMs);
         continue;
       }
 

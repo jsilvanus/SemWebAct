@@ -53,3 +53,10 @@ test("executor blocks navigation outside adapter domains", async () => {
     /domain policy/,
   );
 });
+
+test("executor enforces required input fields", async () => {
+  await assert.rejects(
+    () => new AdapterExecutor(adapter, new FakeDriver()).execute("search", {}),
+    /Missing required action input: query/,
+  );
+});
