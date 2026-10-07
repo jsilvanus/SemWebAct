@@ -13,7 +13,7 @@ services:
       - internal
 
   semwebact-browser:
-    image: mcr.microsoft.com/playwright:v1.55.0-jammy
+    image: mcr.microsoft.com/playwright:v1.63.0-jammy
     working_dir: /app
     command: ["sh", "-lc", "npm ci && npm run start:browser-worker"]
     environment:

@@ -90,7 +90,14 @@ export const adapterJsonSchema = {
               maxProperties: 1,
               additionalProperties: false,
               properties: {
-                navigate: { type: "object" },
+                navigate: {
+                  type: "object",
+                  additionalProperties: false,
+                  required: ["url"],
+                  properties: {
+                    url: { type: "string", minLength: 1 }
+                  }
+                },
                 find: { type: "string" },
                 click: {
                   type: "object",

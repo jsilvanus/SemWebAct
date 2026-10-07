@@ -2,9 +2,12 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { parse } from "yaml";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import { validateAdapter } from "../../packages/adapter-schema/src/validate.js";
 
-const adapterFile = readFileSync("/home/runner/work/SemWebAct/SemWebAct/adapters/example/adapter.yaml", "utf8");
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const adapterFile = readFileSync(join(__dirname, "../../adapters/example/adapter.yaml"), "utf8");
 
 test("example adapter validates", () => {
   const parsed = parse(adapterFile);

@@ -2,11 +2,14 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { parse } from "yaml";
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import { SemWebActRuntime } from "../../apps/server/src/mcp/semantic-runtime.js";
 import type { BrowserDriver, LocatedElement } from "../../packages/adapter-runtime/src/types.js";
 import type { WebMcpRuntime } from "../../packages/webmcp/src/runtime.js";
 
-const adapter = parse(readFileSync("/home/runner/work/SemWebAct/SemWebAct/adapters/example/adapter.yaml", "utf8"));
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const adapter = parse(readFileSync(join(__dirname, "../../adapters/example/adapter.yaml"), "utf8"));
 
 class FakeDriver implements BrowserDriver {
   private url = "https://example.com";

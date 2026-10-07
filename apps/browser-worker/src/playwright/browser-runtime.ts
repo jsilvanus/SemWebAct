@@ -56,13 +56,9 @@ export class PlaywrightBrowserRuntime {
     const session = this.requireSession(sessionId);
     this.assertAllowed(url, session.allowedDomains);
 
-    const response = await session.page.goto(url, { waitUntil: "domcontentloaded" });
+    await session.page.goto(url, { waitUntil: "domcontentloaded" });
     const currentUrl = session.page.url();
     this.assertAllowed(currentUrl, session.allowedDomains);
-
-    if (!response) {
-      return { url: currentUrl };
-    }
 
     return { url: currentUrl };
   }

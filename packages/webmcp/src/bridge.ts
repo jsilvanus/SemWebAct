@@ -14,8 +14,11 @@ export function mapWebMcpToSemanticActions(tools: DiscoveredWebMcpTool[]): Seman
     inputSchema: tool.inputSchema,
     outputSchema: tool.outputSchema,
     source: "webmcp",
-    risk: "read",
-    approval: "none",
+    // Default to high risk and required approval to enforce proper authorization.
+    // WebMCP tools may perform destructive actions; do not assume read-only access.
+    // Override this explicitly for known safe read-only tools.
+    risk: "high",
+    approval: "required",
   }));
 }
 

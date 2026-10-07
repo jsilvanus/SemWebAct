@@ -2,6 +2,8 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import { parse } from "yaml";
 import { readFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 import type { BrowserDriver, LocatedElement } from "../../packages/adapter-runtime/src/types.js";
 import { SemWebActRuntime } from "../../apps/server/src/mcp/semantic-runtime.js";
 import { McpGatewayService } from "../../apps/server/src/mcp/gateway-service.js";
@@ -9,7 +11,8 @@ import { SecureMcpGatewayService } from "../../apps/server/src/mcp/secure-gatewa
 import { ActionAuthorization, ApprovalStore } from "../../apps/server/src/security/policy.js";
 import { ActivityLog } from "../../apps/server/src/sessions/activity-log.js";
 
-const adapter = parse(readFileSync("/home/runner/work/SemWebAct/SemWebAct/adapters/example/adapter.yaml", "utf8"));
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const adapter = parse(readFileSync(join(__dirname, "../../adapters/example/adapter.yaml"), "utf8"));
 adapter.risk = "write";
 adapter.approval = "required";
 
